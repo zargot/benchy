@@ -115,7 +115,7 @@ var shownHeader = false # Only show the header once.
 template keep*(value: untyped) =
   discard
 
-template timeIt*(tag: string, iterations: untyped, body: untyped) =
+template timeIt*(tag: string, iterations: untyped, setup, body: untyped) =
   ## Template to time the block of code.
   if not shownHeader:
     shownHeader = true
@@ -132,8 +132,13 @@ template timeIt*(tag: string, iterations: untyped, body: untyped) =
     deltas: seq[float64]
 
   block:
-    proc test() {.gensym.} =
+    proc test(): float64 {.gensym.} =
+      setup
+      let start = nowMs()
       body
+      let finish = nowMs()
+      let delta = finish - start
+      result = delta
 
     when defined(benchyExtra):
       # warm up
@@ -142,13 +147,7 @@ template timeIt*(tag: string, iterations: untyped, body: untyped) =
 
     while true:
       inc num
-      let start = nowMs()
-
-      test()
-
-      let finish = nowMs()
-
-      let delta = finish - start
+      let delta = test()
       total += delta
       deltas.add(delta)
 
@@ -184,6 +183,9 @@ template timeIt*(tag: string, iterations: untyped, body: untyped) =
     row.add histogram(deltas) & "  "
   row.add tag
   echo row
+
+template timeIt*(tag: string, iterations: untyped, body: untyped) =
+  timeIt(tag, iterations, (discard), body)
 
 template timeIt*(tag: string, body: untyped) =
   ## Template to time block of code.
