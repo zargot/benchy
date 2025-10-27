@@ -175,9 +175,9 @@ template timeIt*(tag: string, iterations: untyped, setup, body: untyped) =
 
   var
     m, s, d: string
-  formatValue(m, minDelta, "0.3f")
-  formatValue(s, avgDelta, "0.3f")
-  formatValue(d, stdDev, "0.3f")
+  formatValue(m, minDelta, "0.5f")
+  formatValue(s, avgDelta, "0.5f")
+  formatValue(d, stdDev, "0.5f")
   var row = align(m, 8) & " ms " & align(s, 8) & " ms " & align("±" & d, 8) & "  " & align("x" & $num, 5) & " "
   when defined(benchyHistogram):
     row.add histogram(deltas) & "  "
