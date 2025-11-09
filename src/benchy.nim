@@ -135,10 +135,13 @@ template timeIt*(tag: string, iterations: untyped, setup, body: untyped) =
     echo header
   var
     num = 0
-    minTime: float64 = float64.high
-    lastMinCount: int
     total: float64
     deltas: seq[float64]
+
+  when defined(benchyMinFinder):
+    var
+      minTime: float64 = float64.high
+      lastMinCount: int
 
   block:
     proc test(): float64 {.gensym.} =
