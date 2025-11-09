@@ -1,4 +1,6 @@
-import std/monotimes, strformat, math, strutils
+import std/strformat, math, strutils
+
+from std/posix import TimeSpec, clock_gettime
 
 when defined(benchyAffinty):
   when defined(windows):
@@ -20,9 +22,16 @@ when defined(benchyAffinty):
     )
   # TODO linux/mac
 
+proc getRawMonotime: float {.tags: [TimeEffect].} =
+    const CLOCK_MONOTONIC_RAW = 4
+    const toSeconds = 1/1_000_000_000
+    var ts: Timespec = default(Timespec)
+    discard clock_gettime(CLOCK_MONOTONIC_RAW, ts)
+    result = toFloat(ts.tv_sec.int) + toFloat(ts.tv_nsec.int) * toSeconds
+
 proc nowMs(): float64 =
   ## Gets current milliseconds.
-  getMonoTime().ticks.float64 / 1000000.0
+  benchy.getRawMonotime() * 1000.0
 
 proc total(s: seq[float64]): float64 =
   ## Computes total of a sequence.
