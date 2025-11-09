@@ -143,7 +143,7 @@ template timeIt*(tag: string, iterations: untyped, setup, body: untyped) =
     when defined(benchyExtra):
       # warm up
       for i in 0 ..< 15:
-        test()
+        discard test()
 
     while true:
       inc num
