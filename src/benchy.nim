@@ -183,7 +183,7 @@ template timeIt*(tag: string, iterations: untyped, setup, body: untyped) =
   removeOutliers(deltas)
   let avgDelta = mean(deltas)
   let stdDev = stdDev(deltas)
-  let median = median(deltas)
+  let median {.used.} = median(deltas)
 
   var
     m, s, d: string
